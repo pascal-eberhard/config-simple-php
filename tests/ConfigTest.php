@@ -24,6 +24,52 @@ class ConfigTest extends TestCase
 {
 
     /**
+     * @see self::testPathLinuxToWindows
+     */
+    public function dataPathLinuxToWindows() {
+        return [
+            /**
+             * @param string $result Converted path
+             * @param string $path Must be absolute
+             *
+             * Hint: The drive letter is always converted to lower case
+             */
+            ['..\\mY\\Path', '../mY/Path'],
+            ['..\\mY\\Path\\', '../mY/Path/'],
+            ['C:\\windows', '/c/windows'],
+            ['C:\\Windows', '/c/Windows'],
+            ['C:\\windows\\', '/c/windows/'],
+            ['C:\\Windows\\', '/c/Windows/'],
+            ['mY\\Path', 'mY/Path'],
+            ['mY\\Path\\', 'mY/Path/'],
+            ['path', 'path'],
+        ];
+    }
+
+    /**
+     * @see self::testPathWindowsToLinux
+     */
+    public function dataPathWindowsToLinux() {
+        return [
+            /**
+             * @param string $result Converted path
+             * @param string $path Must be absolute
+             *
+             * Hint: The drive letter is always converted to lower case
+             */
+            ['../mY/Path', '..\\mY\\Path'],
+            ['../mY/Path/', '..\\mY\\Path\\'],
+            ['/c/windows', 'C:\\windows'],
+            ['/c/Windows', 'c:\\Windows'],
+            ['/c/windows/', 'C:\\windows\\'],
+            ['/c/Windows/', 'c:\\Windows\\'],
+            ['mY/Path', 'mY\\Path'],
+            ['mY/Path/', 'mY\\Path\\'],
+            ['path', 'path'],
+        ];
+    }
+
+    /**
      * @covers ::baseDir
      *
      * Shell: (vendor/bin/phpunit tests/ConfigTest.php --filter testBaseDir)
@@ -32,6 +78,34 @@ class ConfigTest extends TestCase
     {
         $this->assertTrue(true);
         Config::baseDir();
+    }
+
+    /**
+     * @covers ::pathLinuxToWindows
+     * @dataProvider dataPathLinuxToWindows
+     *
+     * @param string $result Converted path
+     * @param string $path Must be absolute
+     *
+     * Shell: (vendor/bin/phpunit tests/ConfigTest.php --filter testPathLinuxToWindows)
+     */
+    public function testPathLinuxToWindows(string $result, string $path)
+    {
+        $this->assertEquals($result, Config::pathLinuxToWindows($path));
+    }
+
+    /**
+     * @covers ::pathWindowsToLinux
+     * @dataProvider dataPathWindowsToLinux
+     *
+     * @param string $result Converted path
+     * @param string $path Must be absolute
+     *
+     * Shell: (vendor/bin/phpunit tests/ConfigTest.php --filter testPathWindowsToLinux)
+     */
+    public function testPathWindowsToLinux(string $result, string $path)
+    {
+        $this->assertEquals($result, Config::pathWindowsToLinux($path));
     }
 //
 //    /**

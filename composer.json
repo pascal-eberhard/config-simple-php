@@ -17,6 +17,7 @@
     ],
     "require":{
         "php": ">=7.1",
+        "ext-ctype": "*",
         "ext-mbstring": "*",
         "symfony/filesystem": "^4.0",
         "symfony/finder": "^4.0"

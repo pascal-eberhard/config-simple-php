@@ -32,7 +32,7 @@ class Config
      *
      * @var string
      */
-    private const CHARSET_UTF8 = 'utf8';
+    const CHARSET_UTF8 = 'utf8';
 
     /**
      * Default directory path separator
@@ -62,13 +62,13 @@ class Config
      * @var string
      */
     private static $baseDirReal = '';
-
-    /**
-     * Operating system key
-     *
-     * @var string
-     */
-    private static $operatingSystem = '';
+//
+//    /**
+//     * Operating system key
+//     *
+//     * @var string
+//     */
+//    private static $operatingSystem = '';
 
     /**
      * Operating system, is Windows?
@@ -93,10 +93,16 @@ class Config
      */
     public static function baseDir(): string
     {
+        if (self::$baseDirSet) {
+            return self::$baseDir;
+        }
+
         // Detect the operating system
         self::operatingSystemIsWindows();
 
         $path = __FILE__;
+        $path = 'F:\\vagrant\\io-php\\vendor\\pascal-eberhard\\config-php\\src\\Config.php';
+        $pathOrg = $path;
 
         // To linux path format
         if (self::$operatingSystemIsWindows) {
@@ -104,13 +110,35 @@ class Config
         }
 
         // Delete the known project path suffix
-        if ('/src/Config.php' !== mb_substr(self::$baseDir, -15, 15, Provider::CHARSET)) {
-            throw new \UnexpectedValueException('Unexpected file path: ' . self::$baseDir);
+        if (mb_strlen($path, self::CHARSET_UTF8) <= 15) {
+            throw new \UnexpectedValueException('Unexpected file path: ' . $pathOrg);
+        } elseif ('/src/Config.php' != mb_substr($path, -15, 15, self::CHARSET_UTF8)) {
+            throw new \UnexpectedValueException('Unexpected file path: ' . $pathOrg);
         }
+
+        $path = mb_substr($path, 0, -14, self::CHARSET_UTF8);
+        $posVendor = mb_stripos($path, '/vendor/', 0, self::CHARSET_UTF8);
+        if (false !== $posVendor) {
+            $path = mb_substr($path, 0, 0 - $posVendor, self::CHARSET_UTF8);
+        }
+        print PHP_EOL;
+        var_export([
+            '$path' => $path,
+        ]);
+        print PHP_EOL;
 //
-//        self::$baseDir = mb_substr(self::$baseDir, 0, -14, Provider::CHARSET);
-//        self::$baseDirSet = true;
-//        self::$baseDirReal = PathString\Utils::linuxToWindows(self::$baseDir);
+//
+////
+////        self::$baseDir = mb_substr(self::$baseDir, 0, -14, Provider::CHARSET);
+////        self::$baseDirSet = true;
+////
+
+        self::$baseDir = $path;
+        self::$baseDirSet = true;
+        self::$baseDirReal = self::$baseDir;
+        if (self::$operatingSystemIsWindows) {
+            self::$baseDirReal = self::pathLinuxToWindows(self::$baseDir);
+        }
 
         return self::$baseDir;
     }
@@ -158,6 +186,62 @@ class Config
     }
 
     /**
+     * Convert linux to windows path
+     *
+     * @param string $path
+     * @return string
+     * @throws \InvalidArgumentException
+     */
+    public static function pathLinuxToWindows(string $path): string
+    {
+        if ('' == $path) {
+            throw new \InvalidArgumentException('$path must not be empty');
+        }
+
+        // We need no convert, if $path not contains backslash
+        if (false === mb_strpos($path, '/', 0, self::CHARSET_UTF8)) {
+            return $path;
+        }
+
+        $path = self::pathLinuxToWindowsConvertPrefix($path);
+        $path = preg_replace('/\//iu', '\\', $path);
+
+        return $path;
+    }
+
+    /**
+     * Convert linux to windows path, convert prefix to windows drive letter, if possible
+     *
+     * @param string $path
+     * @return string
+     */
+    protected static function pathLinuxToWindowsConvertPrefix(string $path): string
+    {
+        // Requirements:
+        // - $path has 3 char prefix
+        // - prefix starts and ends with "7"
+        // - prefix middle is letter
+        if ('' == $path) {
+            return $path;
+        } elseif (mb_strlen($path, self::CHARSET_UTF8) < 3) {
+            return $path;
+        } else if ('/' != mb_substr($path, 0, 1, self::CHARSET_UTF8)) {
+            return $path;
+        } else if ('/' != mb_substr($path, 2, 1, self::CHARSET_UTF8)) {
+            return $path;
+        }
+
+        $letter = mb_substr($path, 1, 1, self::CHARSET_UTF8);
+        if (!ctype_alpha($letter)) {
+            return $path;
+        }
+
+        $letter = mb_strtoupper($letter, self::CHARSET_UTF8);
+
+        return $letter . ':' . mb_substr($path, 2, null, self::CHARSET_UTF8);
+    }
+
+    /**
      * Convert windows to linux path
      *
      * @param string $path
@@ -166,7 +250,6 @@ class Config
      */
     public static function pathWindowsToLinux(string $path): string
     {
-        // Must be absolute path
         if ('' == $path) {
             throw new \InvalidArgumentException('$path must not be empty');
         }
@@ -187,12 +270,6 @@ class Config
         return $path;
     }
 // @todo Integrate simple versions
-//    /**
-//     * Vendor folder name
-//     *
-//     * @var string
-//     */
-//    protected const VENDOR = 'vendor';
 //
 //    /**
 //     * Add tailing directory separator to path, if missing
@@ -217,73 +294,5 @@ class Config
 //        }
 //
 //        return $path;
-//    }
-//
-//    /**
-//     * Find vendor folder parent folder
-//     *
-//     * @param string $path
-//     * @return string
-//     * @throws \InvalidArgumentException
-//     * @throws \LogicException
-//     */
-//    public static function pathFindVendorParent(string $path): string
-//    {
-//        if ('' == $path) {
-//            throw new \InvalidArgumentException('$path must not be empty');
-//        }
-//
-//        $newPath = $path;
-//        print PHP_EOL . var_export(
-//            [
-//                    '$path' => $path,
-//                    'basename.$path' => basename($path),
-//                    'basename.dirname.$path' => basename(dirname($path)),
-//                    'dirname.$path' => dirname($path),
-//                    'pathinfo.$path' => pathinfo($path),
-//                    'pathinfo.dirname.$path' => pathinfo(dirname($path)),
-//            ]
-//        ) . PHP_EOL
-//        ;
-////        while (false !== mb_stripos($newPath, self::VENDOR, 0, MyConfig::CHARSET)) {
-////            $newPath = dirname($newPath);
-////
-////            if ('' == $newPath) {
-////                throw new \LogicException('Empty path, should not happen');
-////            }
-////        }
-//
-//        return $newPath;
-//    }
-//
-//    /**
-//     * Split path
-//     *
-//     * @param string $path
-//     * @return string[] List of path parts and separators
-//     */
-//    public static function pathSplit(string $path): array
-//    {
-//        if ('' == $path) {
-//            return [];
-//        }
-//
-//        $parts = [];
-//        for ($i = 0; $i < 8; ++$i) {
-//            array_unshift($parts, [
-//                'basename' => basename($path),
-//                'dirname' => dirname($path),
-//                'dirname.2' => dirname($path, 2),
-//            ]);
-//            $path = dirname($path);
-//        }
-////        do {
-////            $parts[] = basename($path);
-////            $path = dirname($path);
-////
-////            #$path = '';
-////        } while ('' != $path);
-//
-//        return $parts;
 //    }
 }
