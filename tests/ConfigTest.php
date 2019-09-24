@@ -6,7 +6,7 @@ declare(strict_types=1);
  *
  * (c) Pascal Eberhard <pascal-eberhard-programming@posteo.de>
  *
- * For the full copyright and license information, please view the <https://github.com/pascal-eberhard/config-php/blob/master/LICENSE>
+ * For the full copyright and license information, please view the LICENSE
  */
 
 namespace PEPrograms\ConfigSimple\Tests;
@@ -22,6 +22,15 @@ use PHPUnit\Framework\TestCase;
  */
 class ConfigTest extends TestCase
 {
+
+    /**
+     * Self file path suffix
+     * Linux path format
+     * Prefix: Config::baseDir() // with tailing "/"
+     *
+     * @var string
+     */
+    private const SELF_FILE_SUFFIX = 'tests/ConfigTest.php';
 
     /**
      * @see self::testPathLinuxToWindows
@@ -76,8 +85,20 @@ class ConfigTest extends TestCase
      */
     public function testBaseDir()
     {
-        $this->assertTrue(true);
-        Config::baseDir();
+        $path = Config::pathWindowsToLinux(__FILE__);
+//        $path = $path
+        $posVendor = mb_stripos($path, '/vendor/', 0, Config::CHARSET_UTF8);
+        if (false === $posVendor) {
+            $this->assertEquals($path,
+                Config::baseDir()  . self::SELF_FILE_SUFFIX,
+                'This file path, not in vendor folder'
+            );
+#        } else {
+            // x
+        }
+
+//        $this->assertTrue(true);
+//        Config::baseDir();
     }
 
     /**

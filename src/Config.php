@@ -15,7 +15,6 @@ namespace PEPrograms\ConfigSimple;
  * Simple config
  *
  * @copyright 2019 Pascal Eberhard <pascal-eberhard-programming@posteo.de>
- * @see <https://github.com/pascal-eberhard/config-simple-php/blob/master/README.md>
  */
 class Config
 {
@@ -42,6 +41,14 @@ class Config
     const DIRECTORY_SEPARATOR = '/';
 
     /**
+     * Self file path suffix
+     * Linux path format
+     *
+     * @var string
+     */
+    private const SELF_FILE_SUFFIX = '/src/Config.php';
+
+    /**
      * Base dir
      *
      * @var string
@@ -62,13 +69,6 @@ class Config
      * @var string
      */
     private static $baseDirReal = '';
-//
-//    /**
-//     * Operating system key
-//     *
-//     * @var string
-//     */
-//    private static $operatingSystem = '';
 
     /**
      * Operating system, is Windows?
@@ -83,6 +83,13 @@ class Config
      * @var bool
      */
     private static $operatingSystemIsWindowsIsSet = false;
+
+    /**
+     * Self file path suffix, length
+     *
+     * @var int
+     */
+    private static $selfFileSuffixLength = -1;
 
     /**
      * Get base dir
@@ -101,7 +108,6 @@ class Config
         self::operatingSystemIsWindows();
 
         $path = __FILE__;
-        $path = 'F:\\vagrant\\io-php\\vendor\\pascal-eberhard\\config-php\\src\\Config.php';
         $pathOrg = $path;
 
         // To linux path format
@@ -110,28 +116,35 @@ class Config
         }
 
         // Delete the known project path suffix
-        if (mb_strlen($path, self::CHARSET_UTF8) <= 15) {
-            throw new \UnexpectedValueException('Unexpected file path: ' . $pathOrg);
-        } elseif ('/src/Config.php' != mb_substr($path, -15, 15, self::CHARSET_UTF8)) {
-            throw new \UnexpectedValueException('Unexpected file path: ' . $pathOrg);
+        if (self::$selfFileSuffixLength < 0) {
+            self::$selfFileSuffixLength = mb_strlen(self::SELF_FILE_SUFFIX,
+                self::CHARSET_UTF8
+            );
         }
 
-        $path = mb_substr($path, 0, -14, self::CHARSET_UTF8);
+        if (mb_strlen($path, self::CHARSET_UTF8)
+            <= self::$selfFileSuffixLength
+        ) {
+            throw new \UnexpectedValueException('Unexpected file'
+                . ' path: ' . $pathOrg
+            );
+        } elseif (self::SELF_FILE_SUFFIX
+            != mb_substr($path, 0 - self::$selfFileSuffixLength,
+                self::$selfFileSuffixLength, self::CHARSET_UTF8
+            )
+        ) {
+            throw new \UnexpectedValueException('Unexpected file'
+                . ' path: ' . $pathOrg
+            );
+        }
+
+        $path = mb_substr($path, 0, 0 - (self::$selfFileSuffixLength - 1),
+            self::CHARSET_UTF8
+        );
         $posVendor = mb_stripos($path, '/vendor/', 0, self::CHARSET_UTF8);
         if (false !== $posVendor) {
-            $path = mb_substr($path, 0, 0 - $posVendor, self::CHARSET_UTF8);
+            $path = mb_substr($path, 0, $posVendor + 1, self::CHARSET_UTF8);
         }
-        print PHP_EOL;
-        var_export([
-            '$path' => $path,
-        ]);
-        print PHP_EOL;
-//
-//
-////
-////        self::$baseDir = mb_substr(self::$baseDir, 0, -14, Provider::CHARSET);
-////        self::$baseDirSet = true;
-////
 
         self::$baseDir = $path;
         self::$baseDirSet = true;
