@@ -35,7 +35,8 @@ class ConfigTest extends TestCase
     /**
      * @see self::testPathLinuxToWindows
      */
-    public function dataPathLinuxToWindows() {
+    public function dataPathLinuxToWindows()
+    {
         return [
             /**
              * @param string $result Converted path
@@ -58,7 +59,8 @@ class ConfigTest extends TestCase
     /**
      * @see self::testPathWindowsToLinux
      */
-    public function dataPathWindowsToLinux() {
+    public function dataPathWindowsToLinux()
+    {
         return [
             /**
              * @param string $result Converted path
@@ -86,19 +88,16 @@ class ConfigTest extends TestCase
     public function testBaseDir()
     {
         $path = Config::pathWindowsToLinux(__FILE__);
-//        $path = $path
         $posVendor = mb_stripos($path, '/vendor/', 0, Config::CHARSET_UTF8);
-        if (false === $posVendor) {
-            $this->assertEquals($path,
-                Config::baseDir()  . self::SELF_FILE_SUFFIX,
-                'This file path, not in vendor folder'
-            );
-#        } else {
-            // x
+        if (false !== $posVendor) {
+            $path = mb_substr($path, 0, $posVendor + 1, Config::CHARSET_UTF8) . self::SELF_FILE_SUFFIX;
         }
 
-//        $this->assertTrue(true);
-//        Config::baseDir();
+        $this->assertEquals(
+            $path,
+            Config::baseDir() . self::SELF_FILE_SUFFIX,
+            'This file path, not in vendor folder'
+        );
     }
 
     /**
@@ -128,111 +127,4 @@ class ConfigTest extends TestCase
     {
         $this->assertEquals($result, Config::pathWindowsToLinux($path));
     }
-//
-//    /**
-//     * @see self::testPathAddTailingSeparator
-//     */
-//    public function dataPathAddTailingSeparator() {
-//        return [
-//            /**
-//             * @param string $result Expected result
-//             * @param string $path
-//             * @param string $separator
-//             */
-//            ['/', '', '/'],
-//            ['/', '/', '/'],
-//            ['\\', '', '\\'],
-//            ['\\', '\\', '\\'],
-//            [DIRECTORY_SEPARATOR, '', DIRECTORY_SEPARATOR],
-//            [DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR],
-//        ];
-//    }
-//
-//    /**
-//     * @see self::testPathFindVendorParent
-//     */
-//    public function dataPathFindVendorParent() {
-//        return [
-//            /**
-//             * @param string $result Expected result
-//             * @param string $path
-//             */
-////            ['/', '/'],
-//            ['C:\\projects\\my-project', 'C:\\projects\\my-project\\vendor\\package\\vendor\\file.ext'],
-//        ];
-//    }
-//
-//    /**
-//     * @covers ::pathAddTailingSeparator
-//     * @dataProvider dataPathAddTailingSeparator
-//     *
-//     * @param string $result Expected result
-//     * @param string $path
-//     * @param string $separator
-//     * Shell: (vendor/bin/phpunit tests/ProjectDirFinder/UtilsTest.php --filter testPathAddTailingSeparator)
-//     */
-//    public function testPathAddTailingSeparator(string $result, string $path, string $separator)
-//    {
-//        $this->assertEquals($result, Utils::pathAddTailingSeparator($path, $separator));
-//    }
-////
-////    /**
-////     * @covers ::pathFindVendorParent
-////     * @dataProvider dataPathFindVendorParent
-////     *
-////     * @param string $result Expected result
-////     * @param string $path
-////     * Shell: (vendor/bin/phpunit tests/ProjectDirFinder/UtilsTest.php --filter testPathFindVendorParent)
-////     */
-////    public function testPathFindVendorParent(string $result, string $path)
-////    {
-////        $this->assertEquals($result, Utils::pathFindVendorParent($path));
-////    }
-//
-//
-//    /**
-//     * @see self::testPathSplit
-//     */
-//    public function dataPathSplit() {
-//        return [
-//            /**
-//             * @param string[] $result Expected result
-//             * @param string $path
-//             */
-////            [[], ''],
-////            ['/', '/'],
-//            [
-//                [
-//                    'C:',
-//                    '\\',
-//                    'projects',
-//                    '\\',
-//                    'my-project',
-//                    '\\',
-//                    'vendor',
-//                    '\\',
-//                    'package',
-//                    '\\',
-//                    'vendor',
-//                    '\\',
-//                    'file.ext',
-//                ], 'C:\\projects\\my-project\\vendor\\package\\vendor\\file.ext'
-//            ],
-//        ];
-//    }
-
-//    /**
-//     * @covers ::pathSplit
-//     * @dataProvider dataPathSplit
-//     *
-//     * @param string[] $result Expected result
-//     * @param string $path
-//     * Shell: (vendor/bin/phpunit tests/ProjectDirFinder/UtilsTest.php --filter testPathSplit)
-//     */
-//    public function testPathSplit(array $result, string $path)
-//    {
-//        $this->assertTrue(true);
-//        print PHP_EOL . var_export(Utils::pathSplit($path)) . PHP_EOL;
-//        #$this->assertEquals($result, Utils::pathSplit($path));
-//    }
 }

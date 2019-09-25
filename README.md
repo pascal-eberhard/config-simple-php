@@ -1,6 +1,6 @@
 # Simple Config tools
 
-A simplest possible configuration handler. The do it yourself way.
+A simplest possible configuration handler. The "do it yourself"-way.
 
 ## The problem
 
@@ -13,15 +13,8 @@ Therefore let's first create a simplest possible configuration handler.
 ## Some shell commands
 
 ```bash
-# Check syntax (A bit weird commands in the .sh file, because currently running at windows)
-sh checkSyntax.sh | grep -iv "no syntax errors"
+# All checks
+composer checks
 
-# Unit tests
-vendor/bin/phpunit -vv
-
-# Code sniff/automatic corrections
-vendor/bin/phpcbf --standard=PSR2 resources src
-
-# Code sniff/checks
-vendor/bin/phpcs --standard=PSR2 resources src
+# One at a time, see composer.json "scripts"
 ```

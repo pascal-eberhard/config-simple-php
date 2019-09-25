@@ -117,30 +117,23 @@ class Config
 
         // Delete the known project path suffix
         if (self::$selfFileSuffixLength < 0) {
-            self::$selfFileSuffixLength = mb_strlen(self::SELF_FILE_SUFFIX,
-                self::CHARSET_UTF8
-            );
+            self::$selfFileSuffixLength = mb_strlen(self::SELF_FILE_SUFFIX, self::CHARSET_UTF8);
         }
 
-        if (mb_strlen($path, self::CHARSET_UTF8)
-            <= self::$selfFileSuffixLength
-        ) {
-            throw new \UnexpectedValueException('Unexpected file'
-                . ' path: ' . $pathOrg
-            );
+        if (mb_strlen($path, self::CHARSET_UTF8) <= self::$selfFileSuffixLength) {
+            throw new \UnexpectedValueException('Unexpected file path: ' . $pathOrg);
         } elseif (self::SELF_FILE_SUFFIX
-            != mb_substr($path, 0 - self::$selfFileSuffixLength,
-                self::$selfFileSuffixLength, self::CHARSET_UTF8
+            != mb_substr(
+                $path,
+                0 - self::$selfFileSuffixLength,
+                self::$selfFileSuffixLength,
+                self::CHARSET_UTF8
             )
         ) {
-            throw new \UnexpectedValueException('Unexpected file'
-                . ' path: ' . $pathOrg
-            );
+            throw new \UnexpectedValueException('Unexpected file path: ' . $pathOrg);
         }
 
-        $path = mb_substr($path, 0, 0 - (self::$selfFileSuffixLength - 1),
-            self::CHARSET_UTF8
-        );
+        $path = mb_substr($path, 0, 0 - (self::$selfFileSuffixLength - 1), self::CHARSET_UTF8);
         $posVendor = mb_stripos($path, '/vendor/', 0, self::CHARSET_UTF8);
         if (false !== $posVendor) {
             $path = mb_substr($path, 0, $posVendor + 1, self::CHARSET_UTF8);
@@ -185,12 +178,13 @@ class Config
             return self::$operatingSystemIsWindows;
         }
 
-        self::$operatingSystemIsWindows = ('windows' == mb_strtolower(\PHP_OS_FAMILY, self::CHARSET_UTF8));
+        self::$operatingSystemIsWindows =
+            ('windows' == mb_strtolower(\PHP_OS_FAMILY, self::CHARSET_UTF8));
         if (self::$operatingSystemIsWindows && '\\' != \DIRECTORY_SEPARATOR) {
-            throw new \UnexpectedValueException('\\PHP_OS_FAMILY is "windows" (lower case), but'
-                . ' \\DIRECTORY_SEPARATOR is not ' . var_export('\\', true) . ', but '
-                . var_export(\DIRECTORY_SEPARATOR, true)
-            );
+            throw new \UnexpectedValueException('\\PHP_OS_FAMILY is'
+                . ' "windows" (lower case), but \\DIRECTORY_SEPARATOR is not '
+                . var_export('\\', true) . ', but '
+                . var_export(\DIRECTORY_SEPARATOR, true));
         }
 
         self::$operatingSystemIsWindowsIsSet = true;
@@ -228,7 +222,8 @@ class Config
      * @param string $path
      * @return string
      */
-    protected static function pathLinuxToWindowsConvertPrefix(string $path): string
+    protected static function pathLinuxToWindowsConvertPrefix(string $path
+    ): string
     {
         // Requirements:
         // - $path has 3 char prefix
@@ -238,9 +233,9 @@ class Config
             return $path;
         } elseif (mb_strlen($path, self::CHARSET_UTF8) < 3) {
             return $path;
-        } else if ('/' != mb_substr($path, 0, 1, self::CHARSET_UTF8)) {
+        } elseif ('/' != mb_substr($path, 0, 1, self::CHARSET_UTF8)) {
             return $path;
-        } else if ('/' != mb_substr($path, 2, 1, self::CHARSET_UTF8)) {
+        } elseif ('/' != mb_substr($path, 2, 1, self::CHARSET_UTF8)) {
             return $path;
         }
 
@@ -276,36 +271,10 @@ class Config
         $path = preg_replace('/\\\\/iu', '/', $path);
         if (':/' === mb_substr($path, 1, 2, self::CHARSET_UTF8)) {
             $path = preg_replace_callback('/^([a-z]):\//iu', function ($match) {
-                return '/' . mb_strtolower($match[1], self::CHARSET_UTF8) . '/';
+                return '/' . mb_strtolower($match[1], self::CHARSET_UTF8). '/';
             }, $path);
         }
 
         return $path;
     }
-// @todo Integrate simple versions
-//
-//    /**
-//     * Add tailing directory separator to path, if missing
-//     *
-//     * @param string $path
-//     * @param string $separator Optional, the directory separator default: DIRECTORY_SEPARATOR
-//     * @return string
-//     * @throws \InvalidArgumentException
-//     */
-//    public static function pathAddTailingSeparator(string $path, string $separator = DIRECTORY_SEPARATOR): string
-//    {
-//        if ('' == $separator) {
-//            throw new \InvalidArgumentException('$separator must not be empty');
-//        }
-//
-//        if ('' == $path) {
-//            return $separator;
-//        }
-//
-//        if (mb_substr($path, -1, 1, MyConfig::CHARSET) !== $separator) {
-//            return $path . $separator;
-//        }
-//
-//        return $path;
-//    }
 }
