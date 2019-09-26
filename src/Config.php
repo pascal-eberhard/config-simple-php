@@ -46,7 +46,7 @@ class Config
      *
      * @var string
      */
-    private const SELF_FILE_SUFFIX = '/src/Config.php';
+    private static $selfFileSuffix = '/src/Config.php';
 
     /**
      * Base dir
@@ -117,12 +117,12 @@ class Config
 
         // Delete the known project path suffix
         if (self::$selfFileSuffixLength < 0) {
-            self::$selfFileSuffixLength = mb_strlen(self::SELF_FILE_SUFFIX, self::CHARSET_UTF8);
+            self::$selfFileSuffixLength = mb_strlen(self::$selfFileSuffix, self::CHARSET_UTF8);
         }
 
         if (mb_strlen($path, self::CHARSET_UTF8) <= self::$selfFileSuffixLength) {
             throw new \UnexpectedValueException('Unexpected file path: ' . $pathOrg);
-        } elseif (self::SELF_FILE_SUFFIX
+        } elseif (self::$selfFileSuffix
             != mb_substr(
                 $path,
                 0 - self::$selfFileSuffixLength,
