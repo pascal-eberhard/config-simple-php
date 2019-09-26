@@ -30,7 +30,7 @@ class ConfigTest extends TestCase
      *
      * @var string
      */
-    private const SELF_FILE_SUFFIX = 'tests/ConfigTest.php';
+    const SELF_FILE_SUFFIX = 'tests/ConfigTest.php';
 
     /**
      * @see self::testPathLinuxToWindows

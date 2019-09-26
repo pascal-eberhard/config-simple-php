@@ -1,0 +1,25 @@
+language: php
+php:
+#  - '7.1'
+  - '7.2'
+  - '7.3'
+
+before_install:
+  - "composer validate"
+
+# Install composer dependencies
+install:
+  - "composer install"
+
+# Run script
+script:
+  # #1 Check PHP Syntax
+  - "sh checkSyntax.sh"
+
+  # #2 Unit tests
+  - "phpunit"
+
+# After a build, send email notification with the build results
+notifications:
+  email:
+    - "pascal-eberhard-programming@posteo.de"
