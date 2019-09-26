@@ -2,6 +2,8 @@
 
 A simplest possible configuration handler. The "do it yourself"-way.
 
+[![Build Status](https://travis-ci.com/pascal-eberhard/config-simple-php.svg?branch=master)](https://travis-ci.com/pascal-eberhard/config-simple-php)
+
 ## The problem
 
 I started developing a [config-php](https://github.com/pascal-eberhard/config-php) project. A simple configuration handler, but with some automation. For example, to find the project directory.
