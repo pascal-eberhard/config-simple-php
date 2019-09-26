@@ -4,6 +4,9 @@ php:
 #  - '7.2'
   - '7.3'
 
+before_install:
+  - "composer validate"
+
 # Install composer dependencies
 install:
   - "composer install"
@@ -17,7 +20,7 @@ script:
   - "phpunit"
 
   # #3 Check code style
-  - "sh vendor/bin/phpcs --standard=PSR2 resources src tests"
+  - "phpcs --standard=PSR2 resources src tests"
 
 # After a build, send email notification with the build results
 notifications:
