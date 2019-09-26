@@ -1,7 +1,7 @@
 language: php
 php:
-#  - '7.1'
-#  - '7.2'
+  - '7.1'
+  - '7.2'
   - '7.3'
 
 before_install:
@@ -18,9 +18,6 @@ script:
 
   # #2 Unit tests
   - "phpunit"
-
-  # #3 Check code style
-  - "phpcs --standard=PSR2 resources src tests"
 
 # After a build, send email notification with the build results
 notifications:
