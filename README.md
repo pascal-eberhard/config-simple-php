@@ -1,6 +1,6 @@
 # Simple Config tools
 
-A simplest possible configuration handler. The "do it yourself"-way.
+A simplest possible configuration handler. The "do-it-yourself"-way.
 
 [![Build Status](https://travis-ci.com/pascal-eberhard/config-simple-php.svg?branch=master)](https://travis-ci.com/pascal-eberhard/config-simple-php)
 
