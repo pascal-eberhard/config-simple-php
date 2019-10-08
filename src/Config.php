@@ -21,6 +21,8 @@ class Config
 
     /**
      * Default charset
+     * Overwrite in sub classes, if needed
+     * Access with static::CHARSET
      *
      * @var string
      */
@@ -103,6 +105,9 @@ class Config
         if (self::$baseDirSet) {
             return self::$baseDir;
         }
+
+        // TEMP PHP 7.1 test.
+        $x = static::CHARSET;
 
         // Detect the operating system
         self::operatingSystemIsWindows();

@@ -1,15 +1,15 @@
 language: php
 php:
-#  - '7.1'
-  - '7.2'
-  - '7.3'
+  - '7.1'
+#  - '7.2'
+#  - '7.3'
 
 before_install:
   - "composer validate"
 
 # Install composer dependencies
 install:
-  - "composer install"
+  - "composer install --no-interaction"
 
 # Run script
 script:
@@ -17,7 +17,7 @@ script:
   - "sh checkSyntax.sh"
 
   # #2 Unit tests
-  - "phpunit"
+  - "./vendor/bin/phpunit"
 
 # After a build, send email notification with the build results
 notifications:
