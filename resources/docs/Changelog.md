@@ -1,18 +1,10 @@
 # Change log
 
-## Version 0.1
+## Version 1.0.1
 
-```yaml
-checksDone:
-  codeStyle: true
-  syntax:
-    php: true
-  tests:
-    unit: true
-environment:
-  operationSystem: "Windows 7"
-  PHP:
-    version: "7.2.1"
-  tools:
-    - "GIT bash"
-```
+PHP 7.1 support.
+Change travis.yml, use vendor phpunit, not the travis build in one.
+
+## Version 1.0.0
+
+First stable version.

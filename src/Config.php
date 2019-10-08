@@ -21,6 +21,8 @@ class Config
 
     /**
      * Default charset
+     * Overwrite in sub classes, if needed
+     * Access with static::CHARSET
      *
      * @var string
      */
@@ -104,6 +106,9 @@ class Config
             return self::$baseDir;
         }
 
+        // TEMP PHP 7.1 test.
+        $x = static::CHARSET;
+
         // Detect the operating system
         self::operatingSystemIsWindows();
 
@@ -178,13 +183,32 @@ class Config
             return self::$operatingSystemIsWindows;
         }
 
-        self::$operatingSystemIsWindows =
-            ('windows' == mb_strtolower(\PHP_OS_FAMILY, self::CHARSET_UTF8));
-        if (self::$operatingSystemIsWindows && '\\' != \DIRECTORY_SEPARATOR) {
-            throw new \UnexpectedValueException('\\PHP_OS_FAMILY is'
-                . ' "windows" (lower case), but \\DIRECTORY_SEPARATOR is not '
-                . var_export('\\', true) . ', but '
-                . var_export(\DIRECTORY_SEPARATOR, true));
+        // \PHP_OS_FAMILY  available since PHP 7.2
+        if (\defined('PHP_OS_FAMILY')) {
+            self::$operatingSystemIsWindows = (
+                'windows' == mb_strtolower(\PHP_OS_FAMILY, self::CHARSET_UTF8)
+            );
+
+            if (self::$operatingSystemIsWindows && '\\' != \DIRECTORY_SEPARATOR) {
+                throw new \UnexpectedValueException('\\PHP_OS_FAMILY is'
+                    . ' "windows" (lower case), but \\DIRECTORY_SEPARATOR is not '
+                    . var_export('\\', true) . ', but '
+                    . var_export(\DIRECTORY_SEPARATOR, true));
+            }
+        } else {
+            self::$operatingSystemIsWindows = ('win'
+                == mb_strtolower(
+                    mb_substr(\PHP_OS, 0, 3, self::CHARSET_UTF8),
+                    self::CHARSET_UTF8
+                )
+            );
+
+            if (self::$operatingSystemIsWindows && '\\' != \DIRECTORY_SEPARATOR) {
+                throw new \UnexpectedValueException('\\PHP_OS starts with '
+                    . ' "win" (lower case), but \\DIRECTORY_SEPARATOR is not '
+                    . var_export('\\', true) . ', but '
+                    . var_export(\DIRECTORY_SEPARATOR, true));
+            }
         }
 
         self::$operatingSystemIsWindowsIsSet = true;
@@ -222,8 +246,7 @@ class Config
      * @param string $path
      * @return string
      */
-    protected static function pathLinuxToWindowsConvertPrefix(string $path
-    ): string
+    protected static function pathLinuxToWindowsConvertPrefix(string $path): string
     {
         // Requirements:
         // - $path has 3 char prefix

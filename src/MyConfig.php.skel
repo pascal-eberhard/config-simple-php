@@ -1,0 +1,14 @@
+<?php
+declare(strict_types=1);
+
+namespace {{ yourNameSpace }};
+
+use PEPrograms\ConfigSimple\Config as BaseConfig;
+
+/**
+ * Simple config
+ */
+class Config extends BaseConfig
+{
+    // Add project specific stuff, or overwrite stuff
+}
