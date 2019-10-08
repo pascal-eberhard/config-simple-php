@@ -227,8 +227,7 @@ class Config
      * @param string $path
      * @return string
      */
-    protected static function pathLinuxToWindowsConvertPrefix(string $path
-    ): string
+    protected static function pathLinuxToWindowsConvertPrefix(string $path): string
     {
         // Requirements:
         // - $path has 3 char prefix
