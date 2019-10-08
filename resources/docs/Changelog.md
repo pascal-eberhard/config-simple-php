@@ -2,8 +2,6 @@
 
 ## Version 1.0.1
 
-PENDING!
-
 PHP 7.1 support.
 Change travis.yml, use vendor phpunit, not the travis build in one.
 
